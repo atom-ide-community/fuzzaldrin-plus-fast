@@ -93,12 +93,12 @@ Napi::Value ZadehNode::setTreeFiltererCandidates(const Napi::CallbackInfo &info)
 }
 
 /** (query: string, maxResults: number, usePathScoring: bool, useExtensionBonus: bool) */
-Napi::Value ZadehNode::FilterTree(const Napi::CallbackInfo &info) {
+Napi::Value ZadehNode::FilterIndicesTree(const Napi::CallbackInfo &info) {
     // parse arguments
     if (info.Length() != 4
         || !info[0].IsString()
         || !info[1].IsNumber() || !info[2].IsBoolean() || !info[3].IsBoolean()) {
-        Napi::TypeError::New(info.Env(), "Invalid arguments for FilterTree").ThrowAsJavaScriptException();
+        Napi::TypeError::New(info.Env(), "Invalid arguments for FilterIndicesTree").ThrowAsJavaScriptException();
         return Napi::Array::New(info.Env());
     }
 
@@ -187,7 +187,7 @@ Napi::Object ZadehNode::Init(Napi::Env env, Napi::Object exports) {
       "Zadeh",
       { // member functions in JS
         InstanceMethod("filter", &ZadehNode::Filter),
-        InstanceMethod("filterTree", &ZadehNode::FilterTree),
+        InstanceMethod("filterTree", &ZadehNode::FilterIndicesTree),
         InstanceMethod("setArrayFiltererCandidates", &ZadehNode::setArrayFiltererCandidates),
         InstanceMethod("setTreeFiltererCandidates", &ZadehNode::setTreeFiltererCandidates)
 

@@ -20,7 +20,7 @@ class ZadehNode : public Napi::ObjectWrap<ZadehNode> {
     Napi::Value setArrayFiltererCandidates(const Napi::CallbackInfo &info);
 
     Napi::Value setTreeFiltererCandidates(const Napi::CallbackInfo &info);
-    Napi::Value FilterTree(const Napi::CallbackInfo &info);
+    Napi::Value FilterIndicesTree(const Napi::CallbackInfo &info);
 
   private:
     ArrayFilterer<Napi::Array, CandidateString> arrayFilterer{};
