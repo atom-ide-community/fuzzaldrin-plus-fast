@@ -24,9 +24,9 @@ class TreeFilterer {
     /* const */ string data_key = "data"s;
     /* const */ string children_key = "children"s;
     /** an array of the CandidateObject which includes the data and its address (index, level) in the tree for each */
-
     vector<std::vector<CandidateString>> partitioned_candidates{};
-    //ArrayType candidates_view;    // TODO use a reference or a raw pointer?
+
+    ArrayType candidates_view;    // TODO use a reference or a raw pointer?
 
   public:
     vector<CandidateObject> candidates_vector;
@@ -49,6 +49,9 @@ class TreeFilterer {
     auto set_candidates(const ArrayType &candidates_) {
         make_candidates_vector(candidates_, 0);
         set_partitioned_candidates();
+
+        // store a view of candidates in case filter was called
+        candidates_view = candidates_;
     }
 
     auto set_candidates(const ArrayType &candidates_, const string &data_key_, const string &children_key_) {
@@ -66,6 +69,22 @@ class TreeFilterer {
         const Options options(query, maxResults, usePathScoring, useExtensionBonus);
         return zadeh::filter(partitioned_candidates, query, options);
     }
+
+    auto filter(const std::string &query, const size_t maxResults = 0, const bool usePathScoring = true, const bool useExtensionBonus = false) {
+        auto res = ArrayType{};
+
+        if (candidates_view == nullptr) {
+            return res;    // return an empty vector (should we throw?)
+        }
+
+        const auto filtered_indices = filter_indices(query, maxResults, usePathScoring, useExtensionBonus);
+
+        for (size_t i = 0, len = filtered_indices.size(); i < len; i++) {
+            res[i] = candidates_view[filtered_indices[i]];
+        }
+        return res;
+    }
+
 
   private:
     /** Recursive function that fills the candidates_vector from the given tree_array */
