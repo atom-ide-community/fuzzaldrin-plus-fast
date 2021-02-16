@@ -65,10 +65,10 @@ class ArrayFilterer {
             return res;    // return an empty vector (should we throw?)
         }
 
-        const auto filter_indices = filter(query, maxResults, usePathScoring, useExtensionBonus);
+        const auto filtered_indices = filter_indices(query, maxResults, usePathScoring, useExtensionBonus);
 
-        for (size_t i = 0, len = filter_indices.size(); i < len; i++) {
-            res[i] = candidates_view[filter_indices[i]];
+        for (size_t i = 0, len = filtered_indices.size(); i < len; i++) {
+            res[i] = candidates_view[filtered_indices[i]];
         }
         return res;
     }
