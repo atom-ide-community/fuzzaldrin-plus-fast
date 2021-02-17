@@ -16,11 +16,14 @@ class ZadehNode : public Napi::ObjectWrap<ZadehNode> {
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
     explicit ZadehNode(const Napi::CallbackInfo &info) : Napi::ObjectWrap<ZadehNode>(info) {}
 
-    Napi::Value Filter(const Napi::CallbackInfo &info);
+    Napi::Value filter(const Napi::CallbackInfo &info);
+    Napi::Value filterIndices(const Napi::CallbackInfo &info);
     Napi::Value setArrayFiltererCandidates(const Napi::CallbackInfo &info);
 
     Napi::Value setTreeFiltererCandidates(const Napi::CallbackInfo &info);
-    Napi::Value FilterIndicesTree(const Napi::CallbackInfo &info);
+    Napi::Value filterIndicesTree(const Napi::CallbackInfo &info);
+    Napi::Value filterTree(const Napi::CallbackInfo &info);
+
 
   private:
     ArrayFilterer<Napi::Array, CandidateString> arrayFilterer{};

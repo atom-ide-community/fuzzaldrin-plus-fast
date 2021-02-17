@@ -82,6 +82,23 @@ export class TreeFilterer {
       Boolean(options.useExtensionBonus)
     )
   }
+
+  filterIndices(query, options = {}) {
+    options = parseOptions(options)
+    return this.obj.filterIndicesTree(
+      query,
+      options.maxResults,
+      Boolean(options.usePathScoring),
+      Boolean(options.useExtensionBonus)
+    )
+  }
+}
+
+export function filterIndicesTree(candidatesTrees, query, dataKey = "data", childrenKey = "children", options = {}) {
+  if (!candidatesTrees || !query) return []
+  const treeFilterer = new TreeFilterer()
+  treeFilterer.setCandidates(candidatesTrees, dataKey, childrenKey)
+  return treeFilterer.filterIndicesTree(query, options)
 }
 
 export function filterTree(candidatesTrees, query, dataKey = "data", childrenKey = "children", options = {}) {

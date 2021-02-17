@@ -2,6 +2,7 @@
 #define Zadeh_ArrayFilterer_H
 
 #include "common.h"
+#include "data_interface.h"
 #include "options.h"
 #include "filter.h"
 
@@ -71,20 +72,26 @@ class TreeFilterer {
     }
 
     auto filter(const std::string &query, const size_t maxResults = 0, const bool usePathScoring = true, const bool useExtensionBonus = false) {
-        auto res = ArrayType{};
-
         if (candidates_view == nullptr) {
-            return res;    // return an empty vector (should we throw?)
+            return ArrayType{};    // return an empty vector (should we throw?)
         }
 
         const auto filtered_indices = filter_indices(query, maxResults, usePathScoring, useExtensionBonus);
 
-        for (size_t i = 0, len = filtered_indices.size(); i < len; i++) {
-            res[i] = candidates_view[filtered_indices[i]];
+        const auto filter_indices_length = filtered_indices.size();
+        auto res = ArrayType{};
+        res.reserve(filter_indices_length);
+        for (size_t i = 0; i < filter_indices_length; i++) {
+            res.push_back(candidates_view.get_at(filtered_indices[i]));
         }
-        return res;
-    }
+        //return res;
 
+        const auto candidates_vectorLength = get_size(candidates_view);
+        candidates_vector.reserve(candidates_vectorLength);    // reserve enough space
+        for (auto i_entry = 0u; i_entry < candidates_vectorLength; i_entry++) {
+            make_candidates_vector(get_at<ArrayType, NodeType>(tree_array, i_entry), level, i_entry);
+        }
+    }
 
   private:
     /** Recursive function that fills the candidates_vector from the given tree_array */

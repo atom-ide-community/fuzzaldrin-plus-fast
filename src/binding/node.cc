@@ -44,10 +44,14 @@ optional<Napi::Array> get_children(const Napi::Object &tree_object, const string
 }
 
 
-Napi::Value ZadehNode::Filter(const Napi::CallbackInfo &info) {
+Napi::Value ZadehNode::filter(const Napi::CallbackInfo &info) {
+    const auto out = filterIndices(info);
+}
+
+Napi::Value ZadehNode::filterIndices(const Napi::CallbackInfo &info) {
     auto res = Napi::Array::New(info.Env());
     if (info.Length() != 4 || !info[0].IsString() || !info[1].IsNumber() || !info[2].IsBoolean() || !info[3].IsBoolean()) {
-        Napi::TypeError::New(info.Env(), "Invalid arguments for Filter").ThrowAsJavaScriptException();
+        Napi::TypeError::New(info.Env(), "Invalid arguments for filter").ThrowAsJavaScriptException();
         return Napi::Boolean();
     }
 
@@ -93,12 +97,12 @@ Napi::Value ZadehNode::setTreeFiltererCandidates(const Napi::CallbackInfo &info)
 }
 
 /** (query: string, maxResults: number, usePathScoring: bool, useExtensionBonus: bool) */
-Napi::Value ZadehNode::FilterIndicesTree(const Napi::CallbackInfo &info) {
+Napi::Value ZadehNode::filterIndicesTree(const Napi::CallbackInfo &info) {
     // parse arguments
     if (info.Length() != 4
         || !info[0].IsString()
         || !info[1].IsNumber() || !info[2].IsBoolean() || !info[3].IsBoolean()) {
-        Napi::TypeError::New(info.Env(), "Invalid arguments for FilterIndicesTree").ThrowAsJavaScriptException();
+        Napi::TypeError::New(info.Env(), "Invalid arguments for filterIndicesTree").ThrowAsJavaScriptException();
         return Napi::Array::New(info.Env());
     }
 
@@ -123,6 +127,11 @@ Napi::Value ZadehNode::FilterIndicesTree(const Napi::CallbackInfo &info) {
     }
     return filteredCandidateObjects;
 }
+
+Napi::Value ZadehNode::filterTree(const Napi::CallbackInfo &info) {
+    const auto out = filterIndicesTree(info);
+}
+
 
 
 Napi::Number score(const Napi::CallbackInfo &info) {
@@ -186,11 +195,12 @@ Napi::Object ZadehNode::Init(Napi::Env env, Napi::Object exports) {
       env,
       "Zadeh",
       { // member functions in JS
-        InstanceMethod("filter", &ZadehNode::Filter),
-        InstanceMethod("filterTree", &ZadehNode::FilterIndicesTree),
+        InstanceMethod("filter", &ZadehNode::filter),
+        InstanceMethod("filterIndices", &ZadehNode::filterIndices),
+        InstanceMethod("filterTree", &ZadehNode::filterTree),
+        InstanceMethod("filterIndicesTree", &ZadehNode::filterIndicesTree),
         InstanceMethod("setArrayFiltererCandidates", &ZadehNode::setArrayFiltererCandidates),
         InstanceMethod("setTreeFiltererCandidates", &ZadehNode::setTreeFiltererCandidates)
-
       });
     // export ZadehNode class to JS
     exports.Set("Zadeh", func);

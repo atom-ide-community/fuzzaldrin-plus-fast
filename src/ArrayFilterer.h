@@ -2,6 +2,7 @@
 #define Zadeh_TreeFilterer_H
 
 #include "common.h"
+#include "data_interface.h"
 #include "options.h"
 #include "filter.h"
 
@@ -59,16 +60,16 @@ class ArrayFilterer {
     }
 
     auto filter(const std::string &query, const size_t maxResults = 0, const bool usePathScoring = true, const bool useExtensionBonus = false) {
-        auto res = vector<ArrayType>{};
-
         if (candidates_view == nullptr) {
-            return res;    // return an empty vector (should we throw?)
+            return init<ElementType>(0);    // return an empty vector (should we throw?)
         }
 
         const auto filtered_indices = filter_indices(query, maxResults, usePathScoring, useExtensionBonus);
 
-        for (size_t i = 0, len = filtered_indices.size(); i < len; i++) {
-            res[i] = candidates_view[filtered_indices[i]];
+        const auto filter_indices_length = filtered_indices.size();
+        auto res = init<ElementType>(filter_indices_length);
+        for (size_t i = 0; i < filter_indices_length; i++) {
+            push_back(res, get_at<ArrayType, ElementType>(candidates_view, filtered_indices[i]));
         }
         return res;
     }
